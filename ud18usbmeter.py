@@ -7,7 +7,7 @@ this code will use BLE to connect to a UD18 USB power meter, and obtain data fro
 import asyncio
 import datetime
 
-# requires Bleak
+# requires Bleak, a Python library for BLE
 # https://bleak.readthedocs.io/en/latest/
 # https://github.com/hbldh/bleak
 from bleak import BleakScanner, BleakClient
@@ -61,7 +61,7 @@ class UD18UsbMeter:
         else:
             return False
 
-    async def handle_data(self, ender: int, data: bytearray):
+    async def handle_data(self, sender: int, data: bytearray):
         if self.callback is None:
             # if no function to call, then just print the raw data in hex format
             s = ""
@@ -81,7 +81,7 @@ class UD18UsbMeter:
                 pass
 
 def log_data(voltage: float, amperage: float, milliamphour: int, watthour: float):
-    s = "%s,\t%0.2f,\t%0.2f,\t%0.1f,\t%0.2f" % (datetime.datetime.now().strftime("%H:%M:%S.%f"), voltage, amperage, milliamphour, watthour)
+    s = "%s,\t%0.2f,\t%0.2f,\t%d,\t%0.2f" % (datetime.datetime.now().strftime("%H:%M:%S.%f"), voltage, amperage, milliamphour, watthour)
     print(s)
 
 async def demo_raw_dump():
