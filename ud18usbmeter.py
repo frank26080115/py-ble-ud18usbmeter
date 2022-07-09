@@ -69,12 +69,16 @@ class UD18UsbMeter:
                 s += "%02X " % d
             print("data: %s" % s.strip())
         else:
-            # parse the packet into human readable format
-            v   = float(int( (data[ 5] <<  8) + data[6] )) / 100.0
-            a   = float(int( (data[ 8] <<  8) + data[9] )) / 100.0
-            mah =       int( (data[10] << 16) + (data[11] << 8) + data[12] )
-            wh  = float(int( (data[13] << 24) + (data[14] << 16) + (data[15] << 8) + data[16] )) / 100.0
-            self.callback(v, a, mah, wh)
+            if len(data) == 36:
+                # parse the packet into human readable format
+                v   = float(int( (data[ 5] <<  8) + data[6] )) / 100.0
+                a   = float(int( (data[ 8] <<  8) + data[9] )) / 100.0
+                mah =       int( (data[10] << 16) + (data[11] << 8) + data[12] )
+                wh  = float(int( (data[13] << 24) + (data[14] << 16) + (data[15] << 8) + data[16] )) / 100.0
+                self.callback(v, a, mah, wh)
+            else:
+                # a firmware bug on the UD18, I think it's sending AT commands but it's showing up here as ASCII bytes
+                pass
 
 def log_data(voltage: float, amperage: float, milliamphour: int, watthour: float):
     s = "%s,\t%0.2f,\t%0.2f,\t%0.1f,\t%0.2f" % (datetime.datetime.now().strftime("%H:%M:%S.%f"), voltage, amperage, milliamphour, watthour)
